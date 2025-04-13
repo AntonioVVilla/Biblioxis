@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard - VisorDocs</title>
+    <title>Dashboard - BiblioXis</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .bubbles-container {
@@ -111,8 +111,8 @@
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <a href="{{ route('dashboard') }}" class="flex items-center">
-                            <img src="{{ asset('images/book-logo.svg') }}" alt="VisorDocs Logo" class="h-8 w-8">
-                            <span class="ml-2 text-xl font-semibold text-gray-800">VisorDocs</span>
+                            <img src="{{ asset('images/book-logo.svg') }}" alt="BiblioXis Logo" class="h-8 w-8">
+                            <span class="ml-2 text-xl font-semibold text-gray-800">BiblioXis</span>
                         </a>
                     </div>
                 </div>

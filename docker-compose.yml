@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Servicio de la aplicación PHP
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: biblioxis-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - biblioxis-network
+
+  # Servicio de Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: biblioxis-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - biblioxis-network
+    depends_on:
+      - app
+
+  # Servicio de MySQL
+  db:
+    image: mysql:8.0
+    container_name: biblioxis-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-biblioxis}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_USER: ${DB_USERNAME:-biblioxis}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - biblioxis-network
+    ports:
+      - "3306:3306"
+
+  # Servicio de Redis
+  redis:
+    image: redis:alpine
+    container_name: biblioxis-redis
+    restart: unless-stopped
+    networks:
+      - biblioxis-network
+    ports:
+      - "6379:6379"
+
+  # Servicio de Mailpit para pruebas de correo
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: biblioxis-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Interfaz web
+    networks:
+      - biblioxis-network
+
+networks:
+  biblioxis-network:
+    driver: bridge
+
+volumes:
+  dbdata: 

@@ -1,164 +1,158 @@
-# Visor de Documentos
+# BiblioXis
 
-Un sistema web para visualizar y gestionar documentos en diferentes formatos (PDF, EPUB, DOCX) desarrollado con Laravel.
+BiblioXis es una aplicación web para la gestión y visualización de documentos PDF y EPUB.
 
-## Características
+## Requisitos
 
-- Visualización de documentos PDF, EPUB y DOCX
-- Gestión de usuarios y autenticación
-- Interfaz intuitiva y responsive
-- Previsualización de documentos
-- Controles de zoom y navegación
-- Búsqueda de texto en documentos
-- Gestión de perfil de usuario
+- Docker
+- Docker Compose
+- Git
 
-## Requisitos del Sistema
-
-- PHP >= 8.1
-- Composer
-- Node.js y NPM
-- MySQL >= 5.7
-- Extensión PHP para PDF (php-pdf)
-- Extensión PHP para ZIP (php-zip)
-
-## Instalación
+## Instalación con Docker
 
 1. Clonar el repositorio:
 ```bash
-git clone https://github.com/tu-usuario/visor-docs.git
-cd visor-docs
+git clone [URL_DEL_REPOSITORIO]
+cd biblioxis
 ```
 
-2. Instalar dependencias de PHP:
+2. Configurar el entorno:
 ```bash
-composer install
+# Copiar el archivo de variables de entorno
+cp .env.docker .env
+
+# Construir y ejecutar los contenedores
+docker-compose up -d --build
 ```
 
-3. Instalar dependencias de Node.js:
+3. Configurar la aplicación:
 ```bash
-npm install
+# Generar la clave de aplicación
+docker-compose exec app php artisan key:generate
+
+# Ejecutar migraciones
+docker-compose exec app php artisan migrate
+
+# Instalar dependencias de npm
+docker-compose exec app npm install
+docker-compose exec app npm run build
 ```
 
-4. Copiar el archivo de entorno:
+4. Acceder a la aplicación:
+- La aplicación estará disponible en: http://localhost:8000
+- MySQL: puerto 3306
+- Redis: puerto 6379
+
+## Comandos Docker útiles
+
+### Gestión de contenedores
 ```bash
-cp .env.example .env
+# Iniciar todos los servicios
+docker-compose up -d
+
+# Detener todos los servicios
+docker-compose down
+
+# Reiniciar un servicio específico
+docker-compose restart [servicio]  # Ejemplo: nginx, app, db, redis
+
+# Ver logs en tiempo real
+docker-compose logs -f [servicio]  # Opcional: especificar servicio
 ```
 
-5. Generar la clave de aplicación:
+### Acceso a contenedores
 ```bash
-php artisan key:generate
+# Acceder a la terminal del contenedor de la aplicación
+docker-compose exec app bash
+
+# Acceder a la terminal de MySQL
+docker-compose exec db mysql -u biblioxis -p
+
+# Acceder a Redis CLI
+docker-compose exec redis redis-cli
 ```
 
-6. Configurar la base de datos en el archivo `.env`:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=visor_docs
-DB_USERNAME=tu_usuario
-DB_PASSWORD=tu_contraseña
-```
-
-7. Ejecutar las migraciones:
+### Mantenimiento de la aplicación
 ```bash
-php artisan migrate
+# Ejecutar migraciones
+docker-compose exec app php artisan migrate
+
+# Ejecutar seeders
+docker-compose exec app php artisan db:seed
+
+# Limpiar caché
+docker-compose exec app php artisan cache:clear
+docker-compose exec app php artisan config:clear
+docker-compose exec app php artisan view:clear
+
+# Recompilar assets
+docker-compose exec app npm run dev
+docker-compose exec app npm run build
 ```
 
-8. Compilar los assets:
+### Gestión de volúmenes
 ```bash
-npm run build
+# Listar volúmenes
+docker volume ls
+
+# Eliminar volúmenes (cuidado: esto eliminará los datos)
+docker-compose down -v
 ```
 
-9. Iniciar el servidor de desarrollo:
+### Monitoreo
 ```bash
-php artisan serve
+# Ver estado de los contenedores
+docker-compose ps
+
+# Ver uso de recursos
+docker stats
+
+# Ver logs específicos
+docker-compose logs app  # Logs de la aplicación
+docker-compose logs nginx  # Logs de Nginx
+docker-compose logs db  # Logs de MySQL
 ```
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```
-visor-docs/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── DocumentoController.php
-│   │   │   └── ProfileController.php
-│   │   └── Requests/
-│   ├── Models/
-│   │   └── Documento.php
-│   └── Services/
-│       └── DocumentoService.php
-├── config/
-├── database/
-│   └── migrations/
-├── public/
-│   └── images/
-│       ├── pdf-preview.svg
-│       ├── epub-preview.svg
-│       └── docx-preview.svg
-├── resources/
-│   ├── js/
-│   ├── css/
-│   └── views/
-│       └── documentos/
-├── routes/
-│   ├── web.php
-│   └── api.php
-└── tests/
+biblioxis/
+├── app/              # Código fuente de la aplicación
+├── bootstrap/        # Archivos de arranque
+├── config/          # Configuraciones
+├── database/        # Migraciones y seeders
+├── docker/          # Configuraciones de Docker
+│   └── nginx/       # Configuración de Nginx
+├── public/          # Archivos públicos
+├── resources/       # Vistas y assets
+├── routes/          # Rutas de la aplicación
+├── storage/         # Archivos de almacenamiento
+├── tests/           # Pruebas
+├── .env.docker      # Variables de entorno para Docker
+├── docker-compose.yml # Configuración de servicios
+├── Dockerfile       # Configuración del contenedor PHP
+└── README.md        # Este archivo
 ```
 
-## Uso
+## Solución de problemas comunes
 
-1. Acceder a la aplicación en `http://localhost:8000`
-2. Registrarse o iniciar sesión
-3. Subir documentos desde el botón "Nuevo Documento"
-4. Visualizar documentos haciendo clic en "Leer"
-5. Utilizar los controles de zoom y navegación en el visor
-
-## Formatos Soportados
-
-- PDF: Visualización nativa con controles de zoom y navegación
-- EPUB: Visualización con soporte para navegación entre capítulos
-- DOCX: Visualización con formato preservado
-
-## Contribución
-
-1. Fork el proyecto
-2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abrir un Pull Request
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-```text
-MIT License
-
-Copyright (c) 2024 Tu Nombre
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+1. **Error de permisos**:
+```bash
+docker-compose exec app chown -R www-data:www-data storage bootstrap/cache
 ```
 
-## Contacto
+2. **Reconstruir contenedores**:
+```bash
+docker-compose down
+docker-compose up -d --build
+```
 
-Tu Nombre - [@tutwitter](https://twitter.com/tutwitter) - email@ejemplo.com
+3. **Limpiar caché de Docker**:
+```bash
+docker system prune -a
+```
 
-Link del Proyecto: [https://github.com/tu-usuario/visor-docs](https://github.com/tu-usuario/visor-docs)
+4. **Verificar conexión a la base de datos**:
+```bash
+docker-compose exec db mysql -u biblioxis -p -e "SHOW DATABASES;"
+```

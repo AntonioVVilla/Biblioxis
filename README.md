@@ -21,7 +21,7 @@ cd biblioxis
 # Copiar el archivo de variables de entorno (es posible que requiera el uso del comando 'sudo' si no has includio tu usuario en el grupo Docker)
 cp .env.docker .env
 
-# Construir y ejecutar los contenedores
+# Construir y ejecutar los contenedores (verifica que no hay otros contenedores de docker que usen puertos como el 3306 o el 8000)
 docker-compose up -d --build
 ```
 

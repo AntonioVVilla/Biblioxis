@@ -7,6 +7,7 @@ BiblioXis es una aplicación web para la gestión y visualización de documentos
 - Docker
 - Docker Compose
 - Git
+- NPM
 
 ## Instalación con Docker
 
@@ -36,9 +37,13 @@ docker-compose exec app php artisan key:generate
 # Ejecutar migraciones
 docker-compose exec app php artisan migrate
 
-# Instalar dependencias de npm
-docker-compose exec app npm install
-docker-compose exec app npm run build
+# Instalar dependencias de npm en el directorio del proyecto (pendiente añadir npm al contendor para poder hacer docker-compose exec app)
+npm install
+npm run build
+
+# Ajustes de permisos
+sudo docker-compose exec app chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
 ```
 
 4. Acceder a la aplicación:

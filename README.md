@@ -27,6 +27,9 @@ docker-compose up -d --build
 
 3. Configurar la aplicación:
 ```bash
+# Ejecuta composer install
+sudo docker-compose exec app composer install
+ 
 # Generar la clave de aplicación
 docker-compose exec app php artisan key:generate
 

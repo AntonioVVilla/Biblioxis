@@ -4,10 +4,10 @@ BiblioXis es una aplicación web para la gestión y visualización de documentos
 
 ## Requisitos
 
-- Docker
+- Docker (En windows instalamos docker desktop)
 - Docker Compose
 - Git
-- NPM
+- NPM (En windows instalamos node.js)
 
 ## Instalación con Docker
 

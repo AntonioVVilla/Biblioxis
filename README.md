@@ -18,7 +18,7 @@ cd biblioxis
 
 2. Configurar el entorno:
 ```bash
-# Copiar el archivo de variables de entorno
+# Copiar el archivo de variables de entorno (es posible que requiera el uso del comando 'sudo' si no has includio tu usuario en el grupo Docker)
 cp .env.docker .env
 
 # Construir y ejecutar los contenedores

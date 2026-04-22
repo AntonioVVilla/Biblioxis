@@ -9,14 +9,19 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalDocumentos = Documento::where('user_id', Auth::id())->count();
-        $totalPdfs = Documento::where('user_id', Auth::id())
-            ->where('tipo', 'pdf')
-            ->count();
-        $totalEpubs = Documento::where('user_id', Auth::id())
-            ->where('tipo', 'epub')
-            ->count();
-        $documentosRecientes = Documento::where('user_id', Auth::id())
+        $userId = Auth::id();
+
+        $stats = Documento::ofUser($userId)
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN tipo = 'pdf' THEN 1 ELSE 0 END) as total_pdfs")
+            ->selectRaw("SUM(CASE WHEN tipo = 'epub' THEN 1 ELSE 0 END) as total_epubs")
+            ->first();
+
+        $totalDocumentos = (int) ($stats->total ?? 0);
+        $totalPdfs = (int) ($stats->total_pdfs ?? 0);
+        $totalEpubs = (int) ($stats->total_epubs ?? 0);
+
+        $documentosRecientes = Documento::ofUser($userId)
             ->latest()
             ->take(5)
             ->get();
@@ -28,4 +33,4 @@ class DashboardController extends Controller
             'documentosRecientes'
         ));
     }
-} 
+}

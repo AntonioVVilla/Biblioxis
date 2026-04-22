@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.5-fpm
 
 # Instalar dependencias del sistema y Node.js (opcional, útil para npm build)
 RUN apt-get update && apt-get install -y \

@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,11 +13,18 @@ use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'time' => now()->toIso8601String(),
+    ]);
+})->name('health');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::match(['put', 'patch'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -31,4 +38,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/documentos/create', [DocumentoController::class, 'create'])->name('documentos.create');
     Route::post('/documentos', [DocumentoController::class, 'store'])->name('documentos.store');
     Route::get('/documentos/{documento}/leer', [DocumentoController::class, 'show'])->name('documentos.show');
+    Route::delete('/documentos/{documento}', [DocumentoController::class, 'destroy'])->name('documentos.destroy');
 });

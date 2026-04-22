@@ -1,0 +1,55 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, fileinfo, pdo_mysql, bcmath, gd, zip, intl
+          coverage: none
+          tools: composer:v2
+
+      - name: Install PHP dependencies (production)
+        run: composer install --prefer-dist --no-interaction --no-progress --no-dev --optimize-autoloader
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build production assets
+        run: npm run build
+
+      - name: Create deployment artifact
+        run: |
+          tar --exclude='.git' --exclude='node_modules' --exclude='tests' \
+              --exclude='.github' --exclude='storage/logs/*' \
+              -czf biblioxis-${{ github.sha }}.tar.gz .
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: biblioxis-release
+          path: biblioxis-${{ github.sha }}.tar.gz
+          retention-days: 30

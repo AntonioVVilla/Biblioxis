@@ -2,26 +2,21 @@
 
 namespace App\Providers;
 
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-
 use App\Models\Documento;
 use App\Policies\DocumentoPolicy;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * Las policy mappings para la aplicación.
+     * The policy mappings for the application.
      *
      * @var array<class-string, class-string>
      */
-    protected \$policies = [
+    protected $policies = [
         Documento::class => DocumentoPolicy::class,
     ];
 
-    /**
-     * Registrar cualquier servicio de autenticación/autorización.
-     */
     public function boot(): void
     {
         //

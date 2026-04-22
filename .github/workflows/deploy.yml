@@ -48,7 +48,7 @@ jobs:
               -czf biblioxis-${{ github.sha }}.tar.gz .
 
       - name: Upload deployment artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: biblioxis-release
           path: biblioxis-${{ github.sha }}.tar.gz
